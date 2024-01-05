@@ -62,6 +62,7 @@ PSBT_IN_FINAL_SCRIPTWITNESS = b'\x08'
 PSBT_OUT_REDEEM_SCRIPT = b'\x00'
 PSBT_OUT_WITNESS_SCRIPT = b'\x01'
 PSBT_OUT_BIP32_DERIVATION = b'\x02'
+PSBT_OUT_AMOUNT = b'\x03'
 
          
 class psbt:
@@ -496,7 +497,13 @@ class Updater(PSBT_Role):
         script = raw bytes of witness script being added
         '''
         self.psbt.maps['outputs'][output_index][PSBT_OUT_WITNESS_SCRIPT] = script  
+    def add_output_amount(self, output_index, amount):
+        '''Adds an amount to an output
         
+        output_index - (int) index of the output being updated
+        amount - int of the amount in satoshi
+        '''
+        self.psbt.maps['outputs'][output_index][PSBT_OUT_AMOUNT] = int_to_little_endian(n=amount, length=4)  
         
     def add_output_pubkey(self, output_index, pubkey, masterkey_fingerprint, bip32_path):
         '''Adds a public key and the master key fingerprint + bip32 path it maps to to 
