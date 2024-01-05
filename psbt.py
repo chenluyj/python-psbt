@@ -437,6 +437,13 @@ class Updater(PSBT_Role):
         value = tx_obj.tx_outs[utxo_index].serialize()
         self.psbt.maps['inputs'][input_index][PSBT_IN_WITNESS_UTXO] = value
         
+    def add_public_signing_key(self,input_index ,singer, pubkey):
+        '''Adds a public key to an input
+        
+        input_index - (int) index of the input being updated
+        pubkey - raw bytes of public key being added
+        '''
+        self.psbt.maps['inputs'][input_index][pubkey] = singer
         
     def add_sighash_type(self, input_index, sighash):
         '''Adds a sighash type to an input
