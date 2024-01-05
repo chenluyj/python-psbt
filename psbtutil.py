@@ -13,30 +13,23 @@ from bitcoinlib.encoding import addr_bech32_to_pubkeyhash
 
 def bech32tohash160(address):
     hash160 = addr_bech32_to_pubkeyhash(address)
-    return hash160
+    return len(hash160).to_bytes(length=1,byteorder='little') + hash160
 
 def  mkTx(listData,network,publicKey):
-    # 00 目前不清楚是什么意思  可
-    # 14 是hash160的长度  
-    scriptPubKey_1 = unhexlify('0014') + bech32tohash160(publicKey)
-    # 51 目前不清楚是什么意思  可能和原始钱包地址类型有关？
-    # 20 是hash160的长度
-    placeholderAddress = unhexlify('5120') + bech32tohash160("bc1pcyj5mt2q4t4py8jnur8vpxvxxchke4pzy7tdr9yvj3u3kdfgrj6sw3rzmr");
+    # 00 目前不清楚是什么意思 
+    scriptPubKey_1 = unhexlify('00') + bech32tohash160(publicKey)
+    # 51 目前不清楚是什么意思  
+    placeholderAddress = unhexlify('51') + bech32tohash160("bc1pcyj5mt2q4t4py8jnur8vpxvxxchke4pzy7tdr9yvj3u3kdfgrj6sw3rzmr");
     if network == 'testnet':
-        placeholderAddress = unhexlify('5120') + bech32tohash160("tb1pcyj5mt2q4t4py8jnur8vpxvxxchke4pzy7tdr9yvj3u3kdfgrj6see4dpv");
-    # print(placeholderAddress)
-    # print(scriptPubKey_1)
-    # Inputs
-    utxo_1 = unhexlify('00'*32)
+        placeholderAddress = unhexlify('51') + bech32tohash160("tb1pcyj5mt2q4t4py8jnur8vpxvxxchke4pzy7tdr9yvj3u3kdfgrj6see4dpv");
+    # Global Tx
+    utxo_placeholder = unhexlify('00'*32)
     index_1 = 0
-    utxo_2 = unhexlify('00'*32)
     index_2 = 1
     utxo_3 = unhexlify(listData['nftUtxo']['txHash'])
     index_3 = 0
-    # Target psbt in hex
-    ins = [(utxo_1, index_1),(utxo_2, index_2),(utxo_3, index_3)]
+    ins = [(utxo_placeholder, index_1),(utxo_placeholder, index_2),(utxo_3, index_3)]
     outs = [(0,placeholderAddress),(0,placeholderAddress),(int(listData['price']), scriptPubKey_1)]
-    # (int(listData['nftUtxo']['coinAmount'])
     creator= Creator(ins, outs)
     
     #添加Inputs
@@ -57,13 +50,12 @@ def  mkTx(listData,network,publicKey):
     updater.add_witness_utxo(0, serialized_tx,0)
     updater.add_witness_utxo(1, serialized_tx,1)
     updater.add_witness_utxo(2, serialized_tx,2)
-    #添加Outputs
     # updater.add_output_witness_script(2,scriptPubKey_1) 
+    # 参考okx的SDK 设置的默认值
     updater.add_sighash_type(2, int.from_bytes(unhexlify('83')))
-    # add out mount sdk 中为支持需要自己手动处理
+    
     _psbt1 = updater.serialized()
     return b64encode(_psbt1).decode('utf-8')
-    
 
 def generateSignedListingPsbt(listData,network,publicKey):
     return mkTx(listData,network,publicKey)
