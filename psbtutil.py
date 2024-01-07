@@ -10,6 +10,8 @@ from bitcoin_lib import (
 from binascii import unhexlify
 from base64 import b64encode,b64decode
 from bitcoinlib.encoding import addr_bech32_to_pubkeyhash
+from bitcoinlib.keys import Key
+from bitcoinlib.transactions import Transaction
 
 SELLER_INDEX = 2;
 DUMMY_AMOUNT = 600;
@@ -17,9 +19,34 @@ DUST_OUTPUT_LIMIT = 546;
 
 
 def bech32tohash160(address):
+    '''
+    bech32转hash160 首部包含长度
+    '''
     hash160 = addr_bech32_to_pubkeyhash(address)
     return len(hash160).to_bytes(length=1,byteorder='little') + hash160
 
+def get_compressed_public_key(private_key):
+    '''
+    获取压缩公钥
+    '''
+    key = Key(import_key=private_key)
+    return key.public_byte
+ 
+def signPsbt(psbt,private_key):
+    key = Key(private_key)
+
+    # 解码 PSBT
+    tx = Transaction.import_raw(psbt, network='bitcoin')
+
+    # 对 PSBT 进行签名
+    tx.sign(key)
+
+    # 导出已签名的 PSBT
+    signed_psbt = tx.as_psbt()
+
+    print(signed_psbt)
+
+    
 def  mkTx(listData,network,publicKey):
     # 00 目前不清楚是什么意思 
     scriptPubKey_1 = unhexlify('00') + bech32tohash160(publicKey)
@@ -69,7 +96,7 @@ def generateSignedListingPsbt(listData,network,publicKey):
 def generateSignedBuyPsbt(psbt,publickey,singature):
     psbt_bytes= b64decode(psbt)
     updater = Updater(psbt_bytes)
-    updater.add_public_signing_key(2,singature,publickey)
+    updater.add_public_signing_key(2,publickey,singature)
     _psbt1 = updater.serialized()
     return b64encode(_psbt1).decode('utf-8')
     
