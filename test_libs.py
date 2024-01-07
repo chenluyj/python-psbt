@@ -65,7 +65,7 @@ def TransactionParse(s):
     for i in range(scriptWitness_count-1): # TODO 硬编码的 不明白 因为只有3witness
         script_len = read_varint(s)
         script = s.read(script_len)
-        print('scriptWitness: ', hex(script_len),script.hex())
+        print('scriptWitness: ', hex(script_len)[2:],script.hex())
     locktime = s.read(4)
     print('locktime: ', locktime.hex())
     

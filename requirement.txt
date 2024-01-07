@@ -1,0 +1,4 @@
+requests
+btclib
+bitcoinlib
+jupyter
