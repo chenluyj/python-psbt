@@ -2,3 +2,8 @@ requests
 btclib
 bitcoinlib
 jupyter
+python-bitcoinrpc 
+bitcoinrpc
+python-bitcoinrpc
+fastapi
+uvicorn

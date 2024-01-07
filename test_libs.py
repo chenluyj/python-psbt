@@ -22,6 +22,26 @@ from psbt import (
             Input_Finalizer,
             Transaction_Extractor
             )
+import decimal
+from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
+import json
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return str(o)
+        return super().default(o)
+
+def psbt2json(psbt):
+    decoded_psbt = rpc_client.decodepsbt(psbt)
+    print(json.dumps(decoded_psbt,indent=4, cls=DecimalEncoder))
+    return decoded_psbt
+
+rpc_user = 'btc'
+rpc_password = 'btc2018%A$23'
+rpc_host = '3.1.13.235'
+rpc_port = '18332'
+rpc_client = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_host}:{rpc_port}/")
 
 def TransactionParse(s):
     if isinstance(s, str):
@@ -155,6 +175,8 @@ def test_finalizer():
 def test():
     _psbt = '70736274ff0100f4020000000300000000000000000000000000000000000000000000000000000000000000000000000000ffffffff00000000000000000000000000000000000000000000000000000000000000000100000000ffffffff17866fb4d404a629a517a754af6679164a400fee730b1fb568b8b884dd123b290000000000ffffffff0300000000000000001976a914000000000000000000000000000000000000000088ac00000000000000001976a914000000000000000000000000000000000000000088ac60e31600000000002251207eb2fe599d8af47f6be302c9c035da91cc16c93a3730acde44d3839ef02d1388000000000001011f0000000000000000160014ae47938f7acd1623e6e10e1ebcc33c2a7cb6e30d0001011f0000000000000000160014ae47938f7acd1623e6e10e1ebcc33c2a7cb6e30d0001012b22020000000000002251207eb2fe599d8af47f6be302c9c035da91cc16c93a3730acde44d3839ef02d1388010304830000000117206ce485ac1ff92e8279b72d714a6f5a98e2079f76bc4e6b273f62535f4f87734b00000000'    
     commParse(_psbt)  
+    
+
 if __name__ == '__main__':
     '''
     帮助理解psbt结构
