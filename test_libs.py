@@ -35,7 +35,7 @@ class DecimalEncoder(json.JSONEncoder):
 def psbt2json(psbt):
     decoded_psbt = rpc_client.decodepsbt(psbt)
     print(json.dumps(decoded_psbt,indent=4, cls=DecimalEncoder))
-    return decoded_psbt
+    # return decoded_psbt
 
 rpc_user = 'btc'
 rpc_password = 'btc2018%A$23'
