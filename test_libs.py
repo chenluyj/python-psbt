@@ -125,11 +125,12 @@ def commParse(psbtstr):
     # print('unsign_psbt: \n', psbt_byte.hex(),pbst_len)
     psbtInfo = psbt.parse(BytesIO(psbt_byte))
     print(psbtInfo)
-    psbtInfo = Psbt.parse(BytesIO(psbt_byte))
-    tx_byte = psbtInfo.tx.serialize(True)
-    # print('Tx:',tx_byte.hex())
-    globalParse(tx_byte)
-    print(psbtInfo.serialize(False).hex() == psbt)
+    globalParse(psbtInfo.maps['global'][b'\x00'])
+    # psbtInfo = Psbt.parse(BytesIO(psbt_byte))
+    # tx_byte = psbtInfo.tx.serialize(True)
+    # # print('Tx:',tx_byte.hex())
+    # globalParse(tx_byte)
+    # print(psbtInfo.serialize(False).hex() == psbt)
     
 def unisatBuyParse():
     print('*'*100 + 'unisatBuy' + '*'*50)
