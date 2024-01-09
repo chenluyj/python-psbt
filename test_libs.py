@@ -32,7 +32,7 @@ class DecimalEncoder(json.JSONEncoder):
             return int(o*100000000)
         return int(super().default(o*100000000))
 
-def psbt2json(psbt):
+def rpcdecodepsbt(psbt):
     decoded_psbt = rpc_client.decodepsbt(psbt)
     print(json.dumps(decoded_psbt,indent=4, cls=DecimalEncoder))
     # return decoded_psbt
@@ -73,21 +73,6 @@ def TransactionParse(s):
         adderlen = read_varint(s)
         adderss = s.read(adderlen)
         print(i,'output: ', f'{int_to_little_endian(value,8).hex()+ int.to_bytes(adderlen).hex() +adderss.hex()} => ({value},{adderss.hex()})')
-    witness_len = read_varint(s)
-    print('witness_len:',witness_len)
-    if witness_len != 0:
-        for i in range(inputs_count):
-            witness = s.read(witness_len)
-            print(i,'witness: ', witness.hex())
-    scriptWitness_count = read_varint(s)
-    print('scriptWitness_count:',scriptWitness_count)
-    _o00 = s.read(1) #不清楚是什么意思
-    for i in range(scriptWitness_count-1): # TODO 硬编码的 不明白 因为只有3witness
-        script_len = read_varint(s)
-        script = s.read(script_len)
-        print('scriptWitness: ', hex(script_len)[2:],script.hex())
-    locktime = s.read(4)
-    print('locktime: ', locktime.hex())
     
 def globalParse(s):
     if isinstance(s, str):
