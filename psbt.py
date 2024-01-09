@@ -116,7 +116,7 @@ class psbt:
         _index = 0        
         for o in self.maps['outputs']:
             for k in sorted(o):
-                result += '\tindex({}) keytype({}) : {}\n'.format(o,k.hex(), o[k].hex())   
+                result += '\tindex({}) keytype({}) : {}\n'.format(_index,k.hex(), o[k].hex())   
             _index +=1
         return result
     
