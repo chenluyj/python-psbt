@@ -106,14 +106,18 @@ class psbt:
         result = ('Globals\n===========\n')
         for g in sorted(self.maps['global'].keys()):
             result += '\t{} : {}\n'.format(g.hex(), self.maps['global'][g].hex())
-        result += 'Inputs\n===========\n'  
+        result += 'Pre Inputs\n===========\n'  
+        _index = 0
         for i in self.maps['inputs']:
             for k in sorted(i):
-                result += ('\t{} : {}\n'.format(k.hex(), i[k].hex()))
-        result += 'Outputs\n===========\n'         
+                result += ('\tindex({}) keytype({}) : {}\n'.format(_index,k.hex(), i[k].hex()))
+            _index +=1
+        result += 'Pre Outputs\n===========\n' 
+        _index = 0        
         for o in self.maps['outputs']:
             for k in sorted(o):
-                result += '\t{} : {}\n'.format(k.hex(), o[k].hex())   
+                result += '\tindex({}) keytype({}) : {}\n'.format(o,k.hex(), o[k].hex())   
+            _index +=1
         return result
     
     
