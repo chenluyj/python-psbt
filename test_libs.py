@@ -41,7 +41,8 @@ rpc_user = 'btc'
 rpc_password = 'btc2018%A$23'
 rpc_host = '3.1.13.235'
 rpc_port = '18332'
-rpc_client = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_host}:{rpc_port}/")
+# rpc_client = AuthServiceProxy(f"http://{rpc_user}:{rpc_password}@{rpc_host}:{rpc_port}/")
+rpc_client = AuthServiceProxy("http://:@rpc.coinsdo.net/btc")
 
 def TransactionParse(s):
     if isinstance(s, str):
